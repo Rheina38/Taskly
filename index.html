@@ -144,31 +144,7 @@
           <button class="add-button" onclick="createList()">+ New List</button>
         </div>
 
-        <div id="listsContainer" class="list-grid">
-
-          <div class="list-card">
-            <div class="list-icon">🏫</div>
-            <h2>School</h2>
-            <p>Homework, studying & projects</p>
-            <span id="schoolCount">0 tasks</span>
-          </div>
-
-          <div class="list-card">
-            <div class="list-icon">🏠</div>
-            <h2>Personal</h2>
-            <p>Things to do at home</p>
-            <span id="personalCount">0 tasks</span>
-          </div>
-
-          <div class="list-card">
-            <div class="list-icon">⭐</div>
-            <h2>Important</h2>
-            <p>Your most important tasks</p>
-            <span id="importantCount">0 tasks</span>
-          </div>
-
-        </div>
-
+ <div id="listsContainer" class="list-grid"></div>
       </section>
 
 
@@ -219,66 +195,28 @@
           <button class="add-button" onclick="addGoal()">+ New Goal</button>
         </div>
 
-        <div id="goalsContainer" class="goals-container">
-
-          <div class="goal-card">
-            <div class="goal-top">
-              <div>
-                <h2>Example Goal 🎯</h2>
-                <p>Try creating your own goal!</p>
-              </div>
-              <span>30%</span>
-            </div>
-
-            <div class="goal-bar">
-              <div style="width:30%"></div>
-            </div>
-
-            <button onclick="this.closest('.goal-card').remove()">Delete</button>
-          </div>
-
-        </div>
+        <div id="goalsContainer" class="goals-container"></div>
 
       </section>
 
 
-      <!-- NOTES -->
-      <section id="notes" class="page">
+   <!-- NOTES -->
+<section id="notes" class="page">
 
-        <div class="top">
-          <div>
-            <h1>Notes</h1>
-            <p class="subtitle">A place for all your thoughts and reminders.</p>
-          </div>
-        </div>
-
-        <div class="notes-grid">
-
-          <div class="note-card">
-            <input value="School Notes">
-            <textarea placeholder="Write something..."></textarea>
-          </div>
-
-          <div class="note-card">
-            <input value="Ideas 💡">
-            <textarea placeholder="Write something..."></textarea>
-          </div>
-
-          <div class="note-card">
-            <input value="Things to Remember">
-            <textarea placeholder="Write something..."></textarea>
-          </div>
-
-        </div>
-
-        <button class="add-note" onclick="addNote()">+ Add Note</button>
-
-      </section>
-
-    </main>
+  <div class="top">
+    <div>
+      <h1>Notes</h1>
+      <p class="subtitle">A place for all your thoughts and reminders.</p>
+    </div>
   </div>
 
+  <div class="notes-grid"></div>
 
+  <button class="add-note" onclick="addNote()">+ Add Note</button>
+
+</section>
+
+      
   <!-- ADD TASK POPUP -->
   <div id="taskModal" class="modal">
 
