@@ -658,8 +658,25 @@ body.dark .note-card input {
     align-items: stretch;
   }
 
-  .calendar-days div {
+    .calendar-days div {
     min-height: 55px;
     padding: 5px;
   }
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #e85d9e;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
 }
