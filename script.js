@@ -518,4 +518,3 @@ if (localStorage.getItem("darkMode") === "true") {
 
 updateDate();
 updateEverything();
-```
