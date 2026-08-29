@@ -56,7 +56,7 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 10px;
-  background: #5967e8;
+  background: #f2a0c6;
   color: white;
   margin-right: 8px;
 }
@@ -77,13 +77,13 @@ nav {
 }
 
 .nav-btn:hover {
-  background: #f0f2ff;
-  color: #5967e8;
+  background: #fcebf3;
+  color: #f2a0c6;
 }
 
 .nav-btn.active {
-  background: #eef0ff;
-  color: #5967e8;
+  background: #fde8f1;
+  color: #f2a0c6;
   font-weight: 700;
 }
 
@@ -132,7 +132,7 @@ h1 {
 }
 
 .add-button {
-  background: #5967e8;
+  background: #f2a0c6;
   color: white;
   padding: 13px 20px;
   border-radius: 10px;
@@ -199,7 +199,7 @@ h1 {
 
 .section-title button {
   background: none;
-  color: #5967e8;
+  color: #f2a0c6;
   font-weight: 700;
 }
 
@@ -221,7 +221,7 @@ h1 {
 .task-checkbox {
   width: 20px;
   height: 20px;
-  accent-color: #5967e8;
+  accent-color: #f2a0c6;
 }
 
 .task-name {
@@ -267,7 +267,7 @@ h1 {
 }
 
 .filter.active {
-  background: #5967e8;
+  background: #f2a0c6;
   color: white;
 }
 
@@ -305,7 +305,7 @@ h1 {
 .progress-bar div,
 .goal-bar div {
   height: 100%;
-  background: #5967e8;
+  background: #f2a0c6;
   border-radius: 20px;
   transition: width 0.3s;
 }
@@ -338,7 +338,7 @@ h1 {
 
 .list-card span {
   font-size: 13px;
-  color: #5967e8;
+  color: #f2a0c6;
   font-weight: bold;
 }
 
@@ -353,8 +353,8 @@ h1 {
 }
 
 .calendar-header button {
-  background: #f0f2ff;
-  color: #5967e8;
+  background: #fcebf3;
+  color: #f2a0c6;
   width: 38px;
   height: 38px;
   border-radius: 9px;
@@ -381,15 +381,15 @@ h1 {
 }
 
 .calendar-days .today {
-  background: #eef0ff;
-  color: #5967e8;
+  background: #fde8f1;
+  color: #f2a0c6;
   font-weight: bold;
 }
 
 .calendar-task {
   font-size: 11px;
   margin-top: 7px;
-  background: #5967e8;
+  background: #f2a0c6;
   color: white;
   border-radius: 5px;
   padding: 3px 5px;
@@ -424,7 +424,7 @@ h1 {
 
 .goal-top span {
   font-weight: bold;
-  color: #5967e8;
+  color: #f2a0c6;
 }
 
 .goal-card button {
