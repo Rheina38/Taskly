@@ -1,7 +1,42 @@
-
+```javascript
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let currentFilter = "all";
 let calendarDate = new Date();
+
+let lists = JSON.parse(localStorage.getItem("lists")) || [
+  { id: 1, name: "School", icon: "🏫", description: "Homework, studying & projects" },
+  { id: 2, name: "Personal", icon: "🏠", description: "Things to do at home" },
+  { id: 3, name: "Important", icon: "⭐", description: "Your most important tasks" }
+];
+
+let goals = JSON.parse(localStorage.getItem("goals")) || [];
+
+let notes = JSON.parse(localStorage.getItem("notes")) || [
+  { id: 1, title: "School Notes", text: "" },
+  { id: 2, title: "Ideas 💡", text: "" },
+  { id: 3, title: "Things to Remember", text: "" }
+];
+
+
+// -------------------------
+// SAVE EVERYTHING
+// -------------------------
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function saveLists() {
+  localStorage.setItem("lists", JSON.stringify(lists));
+}
+
+function saveGoals() {
+  localStorage.setItem("goals", JSON.stringify(goals));
+}
+
+function saveNotes() {
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
 
 
 // -------------------------
@@ -26,6 +61,18 @@ function showPage(pageId, button) {
 
   if (pageId === "calendar") {
     renderCalendar();
+  }
+
+  if (pageId === "lists") {
+    renderLists();
+  }
+
+  if (pageId === "goals") {
+    renderGoals();
+  }
+
+  if (pageId === "notes") {
+    renderNotes();
   }
 
   updateEverything();
@@ -80,7 +127,6 @@ function addTask() {
   important.checked = false;
 
   closeTaskBox();
-
   updateEverything();
 }
 
@@ -260,8 +306,106 @@ function updateStats() {
 
 
 // -------------------------
-// LIST COUNTS
+// LISTS
 // -------------------------
+
+function renderLists() {
+
+  const container = document.getElementById("listsContainer");
+
+  if (lists.length === 0) {
+    container.innerHTML = `
+      <div style="padding:30px;color:#8a91a1">
+        You don't have any lists yet. Create one! ✨
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = lists.map(list => {
+
+    const count = tasks.filter(task => task.category === list.name).length;
+
+    return `
+      <div class="list-card">
+
+        <div class="list-icon">${list.icon}</div>
+
+        <h2>${escapeHTML(list.name)}</h2>
+
+        <p>${escapeHTML(list.description)}</p>
+
+        <span>
+          ${count} ${count === 1 ? "task" : "tasks"}
+        </span>
+
+        <br>
+
+        <button
+          onclick="deleteList(${list.id})"
+          style="margin-top:15px;background:none;color:#e35d6a;font-weight:bold;"
+        >
+          Delete List
+        </button>
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+function createList() {
+
+  const name = prompt("What should your new list be called?");
+
+  if (!name || !name.trim()) {
+    return;
+  }
+
+  const cleanName = name.trim();
+
+  if (lists.some(list => list.name.toLowerCase() === cleanName.toLowerCase())) {
+    alert("You already have a list with that name!");
+    return;
+  }
+
+  lists.push({
+    id: Date.now(),
+    name: cleanName,
+    icon: "📁",
+    description: "Your custom list"
+  });
+
+  saveLists();
+  renderLists();
+}
+
+
+function deleteList(id) {
+
+  const list = lists.find(list => list.id === id);
+
+  if (!list) {
+    return;
+  }
+
+  const confirmed = confirm(
+    `Delete the "${list.name}" list?`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  lists = lists.filter(list => list.id !== id);
+
+  saveLists();
+
+  renderLists();
+  updateLists();
+}
+
 
 function updateLists() {
 
@@ -269,14 +413,20 @@ function updateLists() {
   const personal = tasks.filter(task => task.category === "Personal").length;
   const important = tasks.filter(task => task.important).length;
 
-  document.getElementById("schoolCount").textContent =
-    school + (school === 1 ? " task" : " tasks");
+  if (document.getElementById("schoolCount")) {
+    document.getElementById("schoolCount").textContent =
+      school + (school === 1 ? " task" : " tasks");
+  }
 
-  document.getElementById("personalCount").textContent =
-    personal + (personal === 1 ? " task" : " tasks");
+  if (document.getElementById("personalCount")) {
+    document.getElementById("personalCount").textContent =
+      personal + (personal === 1 ? " task" : " tasks");
+  }
 
-  document.getElementById("importantCount").textContent =
-    important + (important === 1 ? " task" : " tasks");
+  if (document.getElementById("importantCount")) {
+    document.getElementById("importantCount").textContent =
+      important + (important === 1 ? " task" : " tasks");
+  }
 }
 
 
@@ -355,34 +505,251 @@ function addGoal() {
 
   const name = prompt("What is your goal?");
 
-  if (!name) return;
+  if (!name || !name.trim()) {
+    return;
+  }
+
+  const goal = {
+    id: Date.now(),
+    name: name.trim(),
+    tasks: []
+  };
+
+  const number = prompt("How many steps/tasks should this goal have?");
+
+  const taskCount = Number(number);
+
+  if (Number.isNaN(taskCount) || taskCount < 1) {
+    alert("Your goal needs at least 1 task.");
+    return;
+  }
+
+  for (let i = 1; i <= taskCount; i++) {
+
+    const taskName = prompt(
+      `Enter goal task ${i} of ${taskCount}:`
+    );
+
+    if (taskName && taskName.trim()) {
+
+      goal.tasks.push({
+        id: Date.now() + i,
+        name: taskName.trim(),
+        completed: false
+      });
+
+    } else {
+      i--;
+    }
+  }
+
+  goals.push(goal);
+
+  saveGoals();
+  renderGoals();
+}
+
+
+function renderGoals() {
 
   const container = document.getElementById("goalsContainer");
 
-  container.innerHTML += `
-    <div class="goal-card">
+  if (goals.length === 0) {
 
-      <div class="goal-top">
+    container.innerHTML = `
+      <div style="padding:30px;color:#8a91a1">
+        No goals yet. Create your first one! 🎯
+      </div>
+    `;
 
-        <div>
-          <h2>${escapeHTML(name)} 🎯</h2>
-          <p>Keep working toward it!</p>
+    return;
+  }
+
+  container.innerHTML = goals.map(goal => {
+
+    const total = goal.tasks.length;
+    const completed = goal.tasks.filter(task => task.completed).length;
+
+    const percentage = total === 0
+      ? 0
+      : Math.round((completed / total) * 100);
+
+    const finished = total > 0 && completed === total;
+
+    return `
+      <div class="goal-card">
+
+        <div class="goal-top">
+
+          <div>
+            <h2>
+              ${escapeHTML(goal.name)}
+              ${finished ? " ✅" : " 🎯"}
+            </h2>
+
+            <p>
+              ${completed} of ${total} tasks complete
+            </p>
+          </div>
+
+          <span>${percentage}%</span>
+
         </div>
 
-        <span>0%</span>
+        <div class="goal-bar">
+          <div style="width:${percentage}%"></div>
+        </div>
+
+        <div style="margin-top:18px;">
+
+          ${goal.tasks.map(goalTask => `
+            <label
+              style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                padding:8px 0;
+              "
+            >
+
+              <input
+                type="checkbox"
+                ${goalTask.completed ? "checked" : ""}
+                onchange="toggleGoalTask(${goal.id}, ${goalTask.id})"
+              >
+
+              <span style="${goalTask.completed ? "text-decoration:line-through;color:#999;" : ""}">
+                ${escapeHTML(goalTask.name)}
+              </span>
+
+            </label>
+          `).join("")}
+
+        </div>
+
+        <button
+          onclick="finishGoal(${goal.id})"
+          style="
+            margin-top:12px;
+            background:#5967e8;
+            color:white;
+            padding:9px 14px;
+            border-radius:8px;
+          "
+          ${finished ? "disabled" : ""}
+        >
+          ${finished ? "Goal Finished ✓" : "Finish Goal"}
+        </button>
+
+        <button
+          onclick="addGoalTask(${goal.id})"
+          style="
+            margin-top:12px;
+            margin-left:8px;
+            background:#eef0ff;
+            color:#5967e8;
+            padding:9px 14px;
+            border-radius:8px;
+          "
+        >
+          + Add Task
+        </button>
+
+        <br>
+
+        <button
+          onclick="deleteGoal(${goal.id})"
+          style="
+            margin-top:12px;
+            background:none;
+            color:#e35d6a;
+          "
+        >
+          Delete Goal
+        </button>
 
       </div>
+    `;
 
-      <div class="goal-bar">
-        <div style="width:0%"></div>
-      </div>
+  }).join("");
+}
 
-      <button onclick="this.closest('.goal-card').remove()">
-        Delete
-      </button>
 
-    </div>
-  `;
+function toggleGoalTask(goalId, taskId) {
+
+  const goal = goals.find(goal => goal.id === goalId);
+
+  if (!goal) {
+    return;
+  }
+
+  const task = goal.tasks.find(task => task.id === taskId);
+
+  if (!task) {
+    return;
+  }
+
+  task.completed = !task.completed;
+
+  saveGoals();
+  renderGoals();
+}
+
+
+function finishGoal(goalId) {
+
+  const goal = goals.find(goal => goal.id === goalId);
+
+  if (!goal) {
+    return;
+  }
+
+  goal.tasks.forEach(task => {
+    task.completed = true;
+  });
+
+  saveGoals();
+  renderGoals();
+}
+
+
+function addGoalTask(goalId) {
+
+  const goal = goals.find(goal => goal.id === goalId);
+
+  if (!goal) {
+    return;
+  }
+
+  const name = prompt("What task should you add to this goal?");
+
+  if (!name || !name.trim()) {
+    return;
+  }
+
+  goal.tasks.push({
+    id: Date.now(),
+    name: name.trim(),
+    completed: false
+  });
+
+  saveGoals();
+  renderGoals();
+}
+
+
+function deleteGoal(goalId) {
+
+  const confirmed = confirm("Delete this goal?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  goals = goals.filter(goal => goal.id !== goalId);
+
+  saveGoals();
+  renderGoals();
 }
 
 
@@ -390,71 +757,108 @@ function addGoal() {
 // NOTES
 // -------------------------
 
-function addNote() {
+function renderNotes() {
 
   const grid = document.querySelector(".notes-grid");
 
-  const note = document.createElement("div");
+  if (!grid) {
+    return;
+  }
 
-  note.className = "note-card";
+  if (notes.length === 0) {
 
-  note.innerHTML = `
-    <input placeholder="Note title">
-    <textarea placeholder="Write something..."></textarea>
-  `;
+    grid.innerHTML = `
+      <div style="padding:30px;color:#8a91a1">
+        No notes yet. Add one below! 📝
+      </div>
+    `;
 
-  grid.appendChild(note);
+    return;
+  }
+
+  grid.innerHTML = notes.map(note => `
+    <div class="note-card">
+
+      <input
+        value="${escapeHTML(note.title)}"
+        oninput="updateNoteTitle(${note.id}, this.value)"
+      >
+
+      <textarea
+        placeholder="Write something..."
+        oninput="updateNoteText(${note.id}, this.value)"
+      >${escapeHTML(note.text)}</textarea>
+
+      <button
+        onclick="deleteNote(${note.id})"
+        style="
+          background:none;
+          color:#e35d6a;
+          font-weight:bold;
+        "
+      >
+        Delete Note
+      </button>
+
+    </div>
+  `).join("");
+
 }
 
 
-// -------------------------
-// NEW LIST
-// -------------------------
+function addNote() {
 
-function createList() {
+  notes.push({
+    id: Date.now(),
+    title: "New Note",
+    text: ""
+  });
 
-  const name = prompt("What should your new list be called?");
-
-  if (!name) return;
-
-  const container = document.getElementById("listsContainer");
-
-  const card = document.createElement("div");
-
-  card.className = "list-card";
-
-  card.innerHTML = `
-    <div class="list-icon">📁</div>
-    <h2>${escapeHTML(name)}</h2>
-    <p>Your custom list</p>
-    <span>0 tasks</span>
-  `;
-
-  container.appendChild(card);
+  saveNotes();
+  renderNotes();
 }
 
 
-// -------------------------
-// DARK MODE
-// -------------------------
+function updateNoteTitle(id, value) {
 
-function toggleDarkMode() {
+  const note = notes.find(note => note.id === id);
 
-  document.body.classList.toggle("dark");
+  if (!note) {
+    return;
+  }
 
-  localStorage.setItem(
-    "darkMode",
-    document.body.classList.contains("dark")
-  );
+  note.title = value;
+
+  saveNotes();
 }
 
 
-// -------------------------
-// SAVE
-// -------------------------
+function updateNoteText(id, value) {
 
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
+  const note = notes.find(note => note.id === id);
+
+  if (!note) {
+    return;
+  }
+
+  note.text = value;
+
+  saveNotes();
+}
+
+
+function deleteNote(id) {
+
+  const confirmed = confirm("Delete this note?");
+
+  if (!confirmed) {
+    return;
+  }
+
+  notes = notes.filter(note => note.id !== id);
+
+  saveNotes();
+  renderNotes();
 }
 
 
@@ -469,10 +873,20 @@ function updateEverything() {
   renderDashboardTasks();
   updateLists();
 
-  if (
-    document.getElementById("calendar").classList.contains("active-page")
-  ) {
+  if (document.getElementById("calendar").classList.contains("active-page")) {
     renderCalendar();
+  }
+
+  if (document.getElementById("lists").classList.contains("active-page")) {
+    renderLists();
+  }
+
+  if (document.getElementById("goals").classList.contains("active-page")) {
+    renderGoals();
+  }
+
+  if (document.getElementById("notes").classList.contains("active-page")) {
+    renderNotes();
   }
 }
 
