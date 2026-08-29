@@ -1,6 +1,4 @@
-**style.css**
 
-```css
 * {
   box-sizing: border-box;
   margin: 0;
@@ -665,4 +663,3 @@ body.dark .note-card input {
     padding: 5px;
   }
 }
-```
