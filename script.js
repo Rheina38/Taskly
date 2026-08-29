@@ -1,6 +1,4 @@
-**script.js**
 
-```javascript
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 let currentFilter = "all";
 let calendarDate = new Date();
