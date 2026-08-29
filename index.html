@@ -1,0 +1,318 @@
+**index.html**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskly</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span>✓</span> Taskly
+      </div>
+
+      <nav>
+        <button class="nav-btn active" onclick="showPage('dashboard', this)">🏠 Dashboard</button>
+        <button class="nav-btn" onclick="showPage('tasks', this)">✅ My Tasks</button>
+        <button class="nav-btn" onclick="showPage('lists', this)">📂 Lists</button>
+        <button class="nav-btn" onclick="showPage('calendar', this)">📅 Calendar</button>
+        <button class="nav-btn" onclick="showPage('goals', this)">🎯 Goals</button>
+        <button class="nav-btn" onclick="showPage('notes', this)">📝 Notes</button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <button class="nav-btn" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+      </div>
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="page active-page">
+
+        <div class="top">
+          <div>
+            <p class="small-text" id="dateText"></p>
+            <h1>Good afternoon! 👋</h1>
+            <p class="subtitle">Here's what's on your plate today.</p>
+          </div>
+
+          <button class="add-button" onclick="openTaskBox()">+ Add Task</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <span>📋</span>
+            <div>
+              <p>Total Tasks</p>
+              <h2 id="totalTasks">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>✅</span>
+            <div>
+              <p>Completed</p>
+              <h2 id="completedTasks">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>⭐</span>
+            <div>
+              <p>Important</p>
+              <h2 id="importantTasks">0</h2>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>📈</span>
+            <div>
+              <p>Progress</p>
+              <h2 id="progressText">0%</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-card">
+          <div class="section-title">
+            <h2>Today's Tasks</h2>
+            <button onclick="showPage('tasks')">View all →</button>
+          </div>
+
+          <div id="dashboardTasks"></div>
+        </div>
+
+        <div class="progress-card">
+          <div>
+            <h3>Today's Progress</h3>
+            <p>Keep going! You're doing great.</p>
+          </div>
+
+          <div class="progress-bar">
+            <div id="progressBar"></div>
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- TASKS -->
+      <section id="tasks" class="page">
+
+        <div class="top">
+          <div>
+            <h1>My Tasks</h1>
+            <p class="subtitle">Everything you need to get done.</p>
+          </div>
+
+          <button class="add-button" onclick="openTaskBox()">+ Add Task</button>
+        </div>
+
+        <div class="filters">
+          <button class="filter active" onclick="filterTasks('all', this)">All</button>
+          <button class="filter" onclick="filterTasks('active', this)">Active</button>
+          <button class="filter" onclick="filterTasks('completed', this)">Completed</button>
+          <button class="filter" onclick="filterTasks('important', this)">⭐ Important</button>
+        </div>
+
+        <div class="content-card">
+          <div id="taskList"></div>
+        </div>
+
+      </section>
+
+
+      <!-- LISTS -->
+      <section id="lists" class="page">
+
+        <div class="top">
+          <div>
+            <h1>My Lists</h1>
+            <p class="subtitle">Keep different parts of your life organized.</p>
+          </div>
+
+          <button class="add-button" onclick="createList()">+ New List</button>
+        </div>
+
+        <div id="listsContainer" class="list-grid">
+
+          <div class="list-card">
+            <div class="list-icon">🏫</div>
+            <h2>School</h2>
+            <p>Homework, studying & projects</p>
+            <span id="schoolCount">0 tasks</span>
+          </div>
+
+          <div class="list-card">
+            <div class="list-icon">🏠</div>
+            <h2>Personal</h2>
+            <p>Things to do at home</p>
+            <span id="personalCount">0 tasks</span>
+          </div>
+
+          <div class="list-card">
+            <div class="list-icon">⭐</div>
+            <h2>Important</h2>
+            <p>Your most important tasks</p>
+            <span id="importantCount">0 tasks</span>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- CALENDAR -->
+      <section id="calendar" class="page">
+
+        <div class="top">
+          <div>
+            <h1>Calendar</h1>
+            <p class="subtitle">See what's coming up.</p>
+          </div>
+        </div>
+
+        <div class="calendar-card">
+
+          <div class="calendar-header">
+            <button onclick="changeMonth(-1)">←</button>
+            <h2 id="monthYear"></h2>
+            <button onclick="changeMonth(1)">→</button>
+          </div>
+
+          <div class="weekdays">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+          </div>
+
+          <div id="calendarDays" class="calendar-days"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- GOALS -->
+      <section id="goals" class="page">
+
+        <div class="top">
+          <div>
+            <h1>Goals</h1>
+            <p class="subtitle">Big things are easier one step at a time.</p>
+          </div>
+
+          <button class="add-button" onclick="addGoal()">+ New Goal</button>
+        </div>
+
+        <div id="goalsContainer" class="goals-container">
+
+          <div class="goal-card">
+            <div class="goal-top">
+              <div>
+                <h2>Example Goal 🎯</h2>
+                <p>Try creating your own goal!</p>
+              </div>
+              <span>30%</span>
+            </div>
+
+            <div class="goal-bar">
+              <div style="width:30%"></div>
+            </div>
+
+            <button onclick="this.closest('.goal-card').remove()">Delete</button>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- NOTES -->
+      <section id="notes" class="page">
+
+        <div class="top">
+          <div>
+            <h1>Notes</h1>
+            <p class="subtitle">A place for all your thoughts and reminders.</p>
+          </div>
+        </div>
+
+        <div class="notes-grid">
+
+          <div class="note-card">
+            <input value="School Notes">
+            <textarea placeholder="Write something..."></textarea>
+          </div>
+
+          <div class="note-card">
+            <input value="Ideas 💡">
+            <textarea placeholder="Write something..."></textarea>
+          </div>
+
+          <div class="note-card">
+            <input value="Things to Remember">
+            <textarea placeholder="Write something..."></textarea>
+          </div>
+
+        </div>
+
+        <button class="add-note" onclick="addNote()">+ Add Note</button>
+
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ADD TASK POPUP -->
+  <div id="taskModal" class="modal">
+
+    <div class="modal-box">
+
+      <button class="close" onclick="closeTaskBox()">×</button>
+
+      <h2>Add a Task</h2>
+
+      <input id="taskInput" placeholder="What do you need to do?">
+
+      <select id="taskCategory">
+        <option value="Personal">Personal</option>
+        <option value="School">School</option>
+      </select>
+
+      <input id="taskDate" type="date">
+
+      <label class="important-check">
+        <input id="importantInput" type="checkbox">
+        Mark as important ⭐
+      </label>
+
+      <button class="add-button full" onclick="addTask()">Add Task</button>
+
+    </div>
+
+  </div>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
+```
