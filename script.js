@@ -127,7 +127,6 @@ function addTask() {
   };
 
   tasks.push(task);
-
   saveTasks();
 
   input.value = "";
@@ -774,10 +773,6 @@ function updateEverything() {
 
   if (document.getElementById("calendar").classList.contains("active-page")) {
     renderCalendar();
-  }
-
-  if (document.getElementById("lists").classList.contains("active-page")) {
-    renderLists();
   }
 
   if (document.getElementById("goals").classList.contains("active-page")) {
