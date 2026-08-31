@@ -84,9 +84,11 @@ function showPage(pageId, button) {
 function getToday() {
   const now = new Date();
 
-  return now.getFullYear() + "-" +
-    String(now.getMonth() + 1).padStart(2, "0") + "-" +
-    String(now.getDate()).padStart(2, "0");
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
 }
 
 // -------------------------
@@ -232,9 +234,11 @@ function renderDashboardTasks() {
 
   const container = document.getElementById("dashboardTasks");
 
-const today = getToday();
-  
-  const todayTasks = tasks.filter(task => task.date === today);
+  const today = getToday();
+
+  const todayTasks = tasks.filter(task => {
+    return task.date === today;
+  });
 
   if (todayTasks.length === 0) {
 
