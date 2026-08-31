@@ -96,6 +96,8 @@ function getToday() {
 // -------------------------
 
 function openTaskBox() {
+  updateCategoryOptions();
+
   document.getElementById("taskModal").classList.add("show");
   document.getElementById("taskInput").focus();
 }
