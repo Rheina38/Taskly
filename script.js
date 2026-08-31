@@ -77,6 +77,17 @@ function showPage(pageId, button) {
   updateEverything();
 }
 
+// -------------------------
+// TODAY'S LOCAL DATE
+// -------------------------
+
+function getToday() {
+  const now = new Date();
+
+  return now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0");
+}
 
 // -------------------------
 // TASK POPUP
@@ -112,7 +123,7 @@ function addTask() {
     id: Date.now(),
     name: input.value.trim(),
     category: category.value,
-    date: date.value || new Date().toISOString().split("T")[0],
+    date: date.value || getToday(),
     important: important.checked,
     completed: false
   };
@@ -221,8 +232,8 @@ function renderDashboardTasks() {
 
   const container = document.getElementById("dashboardTasks");
 
-  const today = new Date().toISOString().split("T")[0];
-
+const today = getToday();
+  
   const todayTasks = tasks.filter(task => task.date === today);
 
   if (todayTasks.length === 0) {
@@ -300,8 +311,8 @@ function updateStats() {
   const important = tasks.filter(task => task.important).length;
 
   // Today's tasks only
-  const today = new Date().toLocaleDateString("en-CA");
-
+  const today = getToday();
+  
   const todayTasks = tasks.filter(task => task.date === today);
 
   const todayCompleted = todayTasks.filter(task => task.completed).length;
