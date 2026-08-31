@@ -249,6 +249,14 @@ function renderDashboardTasks() {
 
 function createTaskHTML(task) {
 
+  const taskDate = new Date(task.date + "T00:00:00");
+
+  const formattedDate = taskDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
   return `
     <div class="task ${task.completed ? "completed" : ""}">
 
@@ -261,10 +269,10 @@ function createTaskHTML(task) {
 
       <div class="task-name">
         ${escapeHTML(task.name)}
-      </div>
 
-      <div class="task-info">
-        ${escapeHTML(task.category)}
+        <div class="task-info">
+          📅 ${formattedDate} · ${escapeHTML(task.category)}
+        </div>
       </div>
 
       ${task.important ? '<span class="task-star">⭐</span>' : ""}
