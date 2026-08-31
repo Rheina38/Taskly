@@ -236,18 +236,14 @@ function renderDashboardTasks() {
 
   const today = getToday();
 
-  const todayTasks = tasks.filter(task => {
-    return task.date === today;
-  });
+  const todayTasks = tasks.filter(task => task.date === today);
 
   if (todayTasks.length === 0) {
-
     container.innerHTML = `
       <div style="text-align:center;padding:25px;color:#8a91a1">
         Nothing planned for today 🎉
       </div>
     `;
-
     return;
   }
 
