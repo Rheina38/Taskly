@@ -502,6 +502,28 @@ function openTaskBoxForList(listName) {
 }
 
 // -------------------------
+// TASK CATEGORY OPTIONS
+// -------------------------
+
+function updateCategoryOptions() {
+
+  const category = document.getElementById("taskCategory");
+
+  if (!category) {
+    return;
+  }
+
+  category.innerHTML = lists
+    .filter(list => list.name !== "Important")
+    .map(list => `
+      <option value="${escapeHTML(list.name)}">
+        ${escapeHTML(list.name)}
+      </option>
+    `)
+    .join("");
+}
+
+// -------------------------
 // CALENDAR
 // -------------------------
 
