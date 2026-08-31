@@ -299,16 +299,27 @@ function updateStats() {
   const completed = tasks.filter(task => task.completed).length;
   const important = tasks.filter(task => task.important).length;
 
-  const progress = total === 0
+  // Today's tasks only
+  const today = new Date().toLocaleDateString("en-CA");
+
+  const todayTasks = tasks.filter(task => task.date === today);
+
+  const todayCompleted = todayTasks.filter(task => task.completed).length;
+
+  const todayProgress = todayTasks.length === 0
     ? 0
-    : Math.round((completed / total) * 100);
+    : Math.round((todayCompleted / todayTasks.length) * 100);
 
   document.getElementById("totalTasks").textContent = total;
   document.getElementById("completedTasks").textContent = completed;
   document.getElementById("importantTasks").textContent = important;
-  document.getElementById("progressText").textContent = progress + "%";
 
-  document.getElementById("progressBar").style.width = progress + "%";
+  // This is now TODAY'S progress
+  document.getElementById("progressText").textContent =
+    todayProgress + "%";
+
+  document.getElementById("progressBar").style.width =
+    todayProgress + "%";
 }
 
 
@@ -331,7 +342,15 @@ function renderLists() {
 
   container.innerHTML = lists.map(list => {
 
-    const count = tasks.filter(task => task.category === list.name).length;
+    // Important is a special list:
+    // it shows every task marked with ⭐
+    let listTasks;
+
+    if (list.name === "Important") {
+      listTasks = tasks.filter(task => task.important);
+    } else {
+      listTasks = tasks.filter(task => task.category === list.name);
+    }
 
     return `
       <div class="list-card">
@@ -343,14 +362,101 @@ function renderLists() {
         <p>${escapeHTML(list.description)}</p>
 
         <span>
-          ${count} ${count === 1 ? "task" : "tasks"}
+          ${listTasks.length}
+          ${listTasks.length === 1 ? "task" : "tasks"}
         </span>
+
+        <div style="margin-top:18px;">
+
+          ${
+            listTasks.length === 0
+              ? `
+                <div style="color:#9aa1b0;font-size:14px;">
+                  No tasks in this list yet ✨
+                </div>
+              `
+              : listTasks.map(task => `
+                <div
+                  style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    padding:8px 0;
+                    border-bottom:1px solid #edf0f5;
+                  "
+                >
+
+                  <input
+                    type="checkbox"
+                    class="task-checkbox"
+                    ${task.completed ? "checked" : ""}
+                    onchange="toggleTaskFromList(${task.id})"
+                  >
+
+                  <div style="
+                    flex:1;
+                    ${task.completed ? "text-decoration:line-through;color:#999;" : ""}
+                  ">
+                    ${escapeHTML(task.name)}
+
+                    <div style="
+                      font-size:11px;
+                      color:#9299a8;
+                      margin-top:2px;
+                    ">
+                      📅 ${formatTaskDate(task.date)}
+                    </div>
+                  </div>
+
+                  ${task.important ? "⭐" : ""}
+
+                  <button
+                    onclick="deleteTaskFromList(${task.id})"
+                    style="
+                      background:none;
+                      color:#a2a8b5;
+                      font-size:18px;
+                    "
+                  >
+                    ×
+                  </button>
+
+                </div>
+              `).join("")
+          }
+
+        </div>
+
+        ${
+          list.name !== "Important"
+            ? `
+              <button
+                onclick="openTaskBoxForList('${escapeHTML(list.name)}')"
+                style="
+                  margin-top:15px;
+                  background:#fde8f1;
+                  color:#e85d9e;
+                  padding:9px 13px;
+                  border-radius:8px;
+                  font-weight:bold;
+                "
+              >
+                + Add Task
+              </button>
+            `
+            : ""
+        }
 
         <br>
 
         <button
           onclick="deleteList(${list.id})"
-          style="margin-top:15px;background:none;color:#e35d6a;font-weight:bold;"
+          style="
+            margin-top:12px;
+            background:none;
+            color:#e35d6a;
+            font-weight:bold;
+          "
         >
           Delete List
         </button>
@@ -360,82 +466,40 @@ function renderLists() {
 
   }).join("");
 }
+function formatTaskDate(dateString) {
 
+  const date = new Date(dateString + "T00:00:00");
 
-function createList() {
-
-  const name = prompt("What should your new list be called?");
-
-  if (!name || !name.trim()) {
-    return;
-  }
-
-  const cleanName = name.trim();
-
-  if (lists.some(list => list.name.toLowerCase() === cleanName.toLowerCase())) {
-    alert("You already have a list with that name!");
-    return;
-  }
-
-  lists.push({
-    id: Date.now(),
-    name: cleanName,
-    icon: "📁",
-    description: "Your custom list"
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
   });
+}
 
-  saveLists();
+
+function toggleTaskFromList(id) {
+  toggleTask(id);
   renderLists();
 }
 
 
-function deleteList(id) {
-
-  const list = lists.find(list => list.id === id);
-
-  if (!list) {
-    return;
-  }
-
-  const confirmed = confirm(
-    `Delete the "${list.name}" list?`
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  lists = lists.filter(list => list.id !== id);
-
-  saveLists();
-
+function deleteTaskFromList(id) {
+  deleteTask(id);
   renderLists();
-  updateLists();
 }
 
 
-function updateLists() {
+function openTaskBoxForList(listName) {
 
-  const school = tasks.filter(task => task.category === "School").length;
-  const personal = tasks.filter(task => task.category === "Personal").length;
-  const important = tasks.filter(task => task.important).length;
+  openTaskBox();
 
-  if (document.getElementById("schoolCount")) {
-    document.getElementById("schoolCount").textContent =
-      school + (school === 1 ? " task" : " tasks");
-  }
+  const category = document.getElementById("taskCategory");
 
-  if (document.getElementById("personalCount")) {
-    document.getElementById("personalCount").textContent =
-      personal + (personal === 1 ? " task" : " tasks");
-  }
-
-  if (document.getElementById("importantCount")) {
-    document.getElementById("importantCount").textContent =
-      important + (important === 1 ? " task" : " tasks");
+  if (category) {
+    category.value = listName;
   }
 }
-
 
 // -------------------------
 // CALENDAR
